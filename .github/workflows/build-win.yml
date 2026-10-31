@@ -27,6 +27,11 @@ jobs:
             exit /b 1
           )
 
+      - name: Setup MSVC environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
       - name: Setup MSYS2 UCRT64
         uses: msys2/setup-msys2@v2
         with:
