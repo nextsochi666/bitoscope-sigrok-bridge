@@ -1,0 +1,61 @@
+name: Windows MSYS2 build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup MSYS2 UCRT64
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: |
+            base-devel
+            mingw-w64-ucrt-x86_64-toolchain
+            mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-ninja
+            mingw-w64-ucrt-x86_64-glib2
+            mingw-w64-ucrt-x86_64-libusb
+            mingw-w64-ucrt-x86_64-libzip
+            mingw-w64-ucrt-x86_64-libserialport
+            make
+            pkg-config
+            autoconf
+            automake
+            libtool
+
+      - name: Prepare required paths for the project build
+        run: |
+          set -eux
+          mkdir -p /tmp/dla32-build /tmp/dla32-src /opt/dla32
+          ln -sfn "$GITHUB_WORKSPACE" /tmp/dla32-project
+          ln -sfn "$GITHUB_WORKSPACE/src" /tmp/dla32-src
+          ls -ld /tmp/dla32-project /tmp/dla32-src
+          echo "PATH=$PATH"
+
+      - name: Build Windows integration
+        run: |
+          set -eux
+          export PATH="/opt/dla32/bin:/ucrt64/bin:/usr/bin:$PATH"
+          bash /tmp/dla32-project/tools/build_windows.sh all
+
+      - name: Upload build artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fnirsi-windows-build
+          path: |
+            /tmp/dla32-build/**
+            /tmp/dla32-project/**
