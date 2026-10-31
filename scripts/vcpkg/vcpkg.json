@@ -3,5 +3,5 @@
   "version": "0.0.0",
   "description": "The DLLs of the bridge that are built with MSVC; libsigrok-4.dll itself is built with MinGW (scripts/build_libsigrok.sh).",
   "dependencies": [ "glib", "libzip", "libusb" ],
-  "builtin-baseline": "8e6f2bb3f4d9c7a1b6e0576b7c1d2a3b5f6a7d8e"
+  "builtin-baseline": "9a5dfef5d1a0438a7d24856a85bd60f309d355e9"
 }
